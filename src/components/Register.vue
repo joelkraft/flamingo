@@ -17,37 +17,28 @@
 </template>
 
 <script>
-import Utils from '../Utils'
-import '../libs/fa'
 import Transactions from './Transactions.vue'
 export default {
   components: {
     Transactions,
   },
   methods: {
-      updateTableData: function({data, index, prop}) {
-                console.log('App', data, index, prop)
-          this.tableData[index][prop] = data
+      updateTableData: function(update) {
+          this.$emit('changeTableData', update)
       },
       createTransaction: function(data) {
-          this.tableData.push(data)
+          this.$emit('createTransaction',data)
       },
       removeTransaction: function(index) {
-          this.tableData = this.tableData.filter((d,i) => i !== index)
+          this.$emit('removeTransaction', index)
       },
       sortByColumn: function(by) {
-          this.sortBy.direction = this.sortBy.column === by ? !this.sortBy.direction : true
-          this.sortBy.column = by
-          Utils.sort(this.tableData, by, this.sortBy.direction)
+          this.$emit('sortColumn', by)
       }
   },
   data: function() {
       return {
-        heading: 'Numbers',
-        sortBy: {
-            column: 'name',
-            direction: false // true = up, false = down
-        }
+        heading: 'Numbers'
     }
   },
   props: ['tableData']
