@@ -18,6 +18,11 @@ import './libs/fa'
 
 import data from './data.json'
 
+const API = {
+    root: ()=>"http://localhost:3000",
+    get: resource=>`${API.root()}/${resource}`
+}
+
 const routes = [
     { path: '/', component: {template: '<router-link to="register">Register</router-link>'} },
     { path: '/register', component: Register },
@@ -28,7 +33,9 @@ const router = new VueRouter({ routes })
 export default {
   el: '#app',
   mounted: function() {
-      this.tableData = data.data
+      fetch(API.get('animals'))
+        .then(r=>r.json())
+        .then(json => this.tableData = json.data)
   },
   data: {
     tableData: [],
@@ -42,7 +49,18 @@ export default {
           this.tableData[index][prop] = data
       },
       createTransaction: function(data) {
-          this.tableData.push(data)
+        fetch(API.get('animals'), {
+            body: JSON.stringify(data),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(r=>r.json())
+        .then(json=> console.log(json))
+        //   Array.isArray(this.tableData)
+        //   ? this.tableData.push(data)
+        //   : this.tableData = [ data ]
       },
       removeTransaction: function(index) {
           this.tableData = this.tableData.filter((d,i) => i !== index)
