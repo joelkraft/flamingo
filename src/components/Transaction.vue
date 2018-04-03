@@ -9,7 +9,6 @@ export default {
   props: ['text'],
   methods: {
     changeValue: function(e) {
-        console.log('Transaction', e.target.value)
         this.$emit('changeData', e.target.value)
     },
   },

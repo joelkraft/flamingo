@@ -2,22 +2,22 @@
   <table class="table is-striped">
     <thead>
       <tr>
-        <th>&nbsp;&nbsp;&nbsp;Animal<span class="icon button is-light" style="float:right;" @click="sort('name')"><i class="fas fa-sort"></i></span></th>
-        <th>&nbsp;&nbsp;&nbsp;Color<span class="icon button is-light" style="float:right;" @click="sort('color')"><i class="fas fa-sort"></i></span></th>
-        <th>&nbsp;&nbsp;&nbsp;Food<span class="icon button is-light" style="float:right;" @click="sort('food')"><i class="fas fa-sort"></i></span></th>
-        <th>&nbsp;&nbsp;&nbsp;Size<span class="icon button is-light" style="float:right;" @click="sort('size')"><i class="fas fa-sort"></i></span></th>
+        <th>&nbsp;&nbsp;&nbsp;Animal<span class="icon button is-light" style="float:right;" @click="sort('name')"><font-awesome-icon :icon="sortArrow" /></span></th>
+        <th>&nbsp;&nbsp;&nbsp;Color<span class="icon button is-light" style="float:right;" @click="sort('color')"><font-awesome-icon :icon="sortArrow" /></span></th>
+        <th>&nbsp;&nbsp;&nbsp;Food<span class="icon button is-light" style="float:right;" @click="sort('food')"><font-awesome-icon :icon="sortArrow" /></span></th>
+        <th>&nbsp;&nbsp;&nbsp;Size<span class="icon button is-light" style="float:right;" @click="sort('size')"><font-awesome-icon :icon="sortArrow" /></span></th>
       </tr>
     </thead>
     <tbody>
       <NewTransaction v-on:createTransaction="createTransaction"></NewTransaction>
-      <tr v-for="(item, index) in tableData">
-        <Transaction :text="item.name" v-on:changeData="data => onChangeData({data, prop:'name', index})"></Transaction>
-        <Transaction :text="item.color" v-on:changeData="data => onChangeData({data, prop:'color', index})"></Transaction>
-        <Transaction :text="item.food" v-on:changeData="data => onChangeData({data, prop:'food', index})"></Transaction>
-        <Transaction :text="item.size" v-on:changeData="data => onChangeData({data, prop:'size', index})"></Transaction>
+      <tr v-for="item in tableData">
+        <Transaction :text="item.name" v-on:changeData="value => onChangeData({value, prop:'name', id:item.id})"></Transaction>
+        <Transaction :text="item.color" v-on:changeData="value => onChangeData({value, prop:'color', id:item.id})"></Transaction>
+        <Transaction :text="item.food" v-on:changeData="value => onChangeData({value, prop:'food', id:item.id})"></Transaction>
+        <Transaction :text="item.size" v-on:changeData="value => onChangeData({value, prop:'size', id:item.id})"></Transaction>
         <td class="has-centered-text" style="vertical-align:middle;text-align: center;">
-          <span class="icon button is-light" @click="handleRemove(index)">
-            <i class="fas fa-times-circle is-large"></i>
+          <span class="icon button is-light" @click="handleRemove(item.id)">
+            <font-awesome-icon :icon="closeButton" />
           </span>
         </td>
       </tr>
@@ -26,6 +26,9 @@
 </template>
 
 <script>
+import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+import { faTimesCircle, faSort } from '@fortawesome/fontawesome-free-solid'
+
 import NewTransaction from './NewTransaction.vue';
 import Transaction from './Transaction.vue';
 
@@ -33,12 +36,20 @@ export default {
   components: {
     Transaction,
     NewTransaction,
+    FontAwesomeIcon
+  },
+  computed: {
+      closeButton() {
+          return faTimesCircle
+      },
+      sortArrow() {
+        return faSort
+      }
   },
   props: ['tableData'],
   methods: {
-    onChangeData: function({ data, index, prop }) {
-      console.log('Transactions', data, index);
-      this.$emit('changeTableData', { data, index, prop });
+    onChangeData: function({ value, id, prop }) {
+      this.$emit('changeTableData', { value, id, prop });
     },
     createTransaction: function(data) {
       this.$emit('createTransaction', data);
